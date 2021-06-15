@@ -9,4 +9,5 @@ import java.security.Key
 interface JwtKeyProvider {
     fun getSignKey(): Key
     fun getVerifyKey(): Key
+    fun getAlgorithm(): JwtAlgorithm
 }
