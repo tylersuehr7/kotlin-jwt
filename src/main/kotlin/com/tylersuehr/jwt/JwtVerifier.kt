@@ -85,7 +85,7 @@ class JwtVerifier(val keyProvider: JwtKeyProvider) {
      */
     fun verify(token: String): Jwt {
         // Split up the token into individual segments
-        val segments = token.split(",")
+        val segments = token.split(".")
         if (segments.size != 3) {
             throw JwtException(JwtErrorMessage("Invalid jwt!"))
         }

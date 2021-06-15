@@ -12,19 +12,9 @@ import kotlin.test.assertNotNull
 class JwtSignerTest {
     @Test
     fun algorithm() {
-        val signer = JwtSigner(object : JwtKeyProvider {
-            override fun getSignKey(): Key {
-                TODO("Not yet implemented")
-            }
-
-            override fun getVerifyKey(): Key {
-                TODO("Not yet implemented")
-            }
-        })
-
+        val signer = JwtSigner(makeKeyProvider())
         val expected = JwtAlgorithm.KS256
         signer.setAlgorithm(expected)
-        assertNotNull(signer.headerClaims.getAlgorithm())
         assertEquals(expected, signer.headerClaims.getAlgorithm())
     }
 
@@ -33,10 +23,8 @@ class JwtSignerTest {
         val header = Claims().setType("JWT").setAlgorithm(JwtAlgorithm.KS256)
         val payload = Claims().setIssuer("unit.tester")
         val signer = JwtSigner(makeKeyProvider(), header, payload)
-
         val token = signer.compact()
         assertNotNull(token)
-
         println(token)
     }
 
