@@ -10,22 +10,11 @@ class JwtSigner(
     val payloadClaims: Claims = Claims()
 ) {
     /**
-     * Sets the algorithm used to sign tokens.
-     *
-     * @param alg the algorithm
-     * @return {@code this}
-     */
-    fun setAlgorithm(alg: JwtAlgorithm): JwtSigner {
-        this.headerClaims.setAlgorithm(alg)
-        return this
-    }
-
-    /**
      * Compacts and signs the token.
      * @return the compacted token
      */
     fun compact(): String {
-        val algorithm = this.headerClaims.getAlgorithm() ?: throw IllegalStateException("Please specify a signing algorithm!")
+        val algorithm = keyProvider.getAlgorithm()
 
         // Convert claims to json and encode them
         val encodedHeader = Claims.encoder.encodeToString(Claims.jsonifier.toJson(this.headerClaims).toByteArray())
