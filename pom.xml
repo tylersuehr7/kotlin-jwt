@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jwt</artifactId>
     <groupId>com.tylersuehr</groupId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
-    <name>JSON Web Token</name>
+    <name>JWT</name>
+    <description>A hardened JWT library based on Bouncy Castle written in Kotlin.</description>
     <developers>
         <developer>
             <name>Tyler Suehr</name>
@@ -15,7 +16,10 @@
             <organization>Suehr Solutions LLC</organization>
         </developer>
     </developers>
+
     <properties>
+        <java.version>16</java.version>
+        <kotlin.version>1.5.10</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
@@ -101,5 +105,13 @@
             <version>1.64</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Kotlin JWT</name>
+            <url>https://maven.pkg.github.com/tylersuehr7/kotlin-jwt</url>
+        </repository>
+    </distributionManagement>
 
 </project>
