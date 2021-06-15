@@ -60,7 +60,8 @@ class Claims : HashMap<String,Any>() {
     fun clearSubject() = remove(SUBJECT)
 
     fun getExpiration(): Long? {
-        return get(EXPIRATION) as Long?
+        val result = get(EXPIRATION) as Double? ?: return null
+        return result.toLong()
     }
     fun setExpiration(duration: Duration): Claims {
         val nowSecs = System.currentTimeMillis() / 1000L
@@ -70,7 +71,8 @@ class Claims : HashMap<String,Any>() {
     fun clearExpiration() = remove(EXPIRATION)
 
     fun getNotBefore(): Long? {
-        return get(NOT_BEFORE) as Long?
+        val result = get(NOT_BEFORE) as Double? ?: return null
+        return result.toLong()
     }
     fun setNotBefore(nbf: Duration): Claims {
         val nowSecs = System.currentTimeMillis() / 1000L
@@ -80,7 +82,8 @@ class Claims : HashMap<String,Any>() {
     fun clearNotBefore() = remove(NOT_BEFORE)
 
     fun getTimestamp(): Long? {
-        return get(TIMESTAMP) as Long?
+        val result = get(TIMESTAMP) as Double? ?: return null
+        return result.toLong()
     }
     fun setTimestamp(timestamp: Long): Claims {
         put(TIMESTAMP, timestamp)
