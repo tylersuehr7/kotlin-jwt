@@ -152,4 +152,11 @@ internal class ClaimsTest {
         claims.clearId()
         assertNull(claims.getId())
     }
+
+    @Test
+    fun assertVariablesNotNull() {
+        assertNotNull(Claims.jsonifier)
+        assertNotNull(Claims.encoder)
+        assertNotNull(Claims.decoder)
+    }
 }
