@@ -15,14 +15,6 @@ import kotlin.test.assertTrue
  */
 class JwtVerifierTest {
     @Test
-    fun expectAlgorithm() {
-        val expected = JwtAlgorithm.KS256
-        val verifier = JwtVerifier(makeKeyProvider())
-        verifier.expectAlgorithm(expected)
-        assertEquals(expected, verifier.algorithm)
-    }
-
-    @Test
     fun expectIssuer() {
         val expected = "something strange"
         val verifier = JwtVerifier(makeKeyProvider())
@@ -65,18 +57,14 @@ class JwtVerifierTest {
     @Test
     fun verify() {
         val provider = makeKeyProvider()
-        val algorithm = JwtAlgorithm.KS256
         val issuer = "com.unit.test"
+        val signer = JwtSigner(provider, payloadClaims = Claims().setIssuer(issuer))
 
-        val header = Claims().setAlgorithm(algorithm)
-        val payload = Claims().setIssuer(issuer)
-        val signer = JwtSigner(provider, header, payload)
         val token = signer.compact()
         assertNotNull(token)
         println(token)
 
         val verifier = JwtVerifier(provider)
-        verifier.expectAlgorithm(algorithm)
         verifier.expectIssuer(issuer)
 
         val result = verifier.verify(token)
@@ -86,16 +74,16 @@ class JwtVerifierTest {
     @Test
     fun verifyInvalidAlgorithm() {
         val provider = makeKeyProvider()
-
-        val signer = JwtSigner(provider,
-            Claims().setAlgorithm(JwtAlgorithm.KS256)
-        )
+        val signer = JwtSigner(provider)
         val token = signer.compact()
         assertNotNull(token)
 
         assertThrows<JwtException> {
-            val verifier = JwtVerifier(provider).expectAlgorithm(JwtAlgorithm.PS512)
-            verifier.verify(token)
+            JwtVerifier(object : JwtKeyProvider {
+                override fun getSignKey(): Key = TODO()
+                override fun getVerifyKey(): Key = TODO()
+                override fun getAlgorithm(): JwtAlgorithm = JwtAlgorithm.HS512
+            }).verify(token)
         }
     }
 
@@ -227,9 +215,11 @@ class JwtVerifierTest {
 
     private fun makeKeyProvider(): JwtKeyProvider {
         return object : JwtKeyProvider {
-            val secret = Bouncy.genKey("HMAC-SHA256")
+            val secretAlg = JwtAlgorithm.HS256
+            val secret = Bouncy.genKey(secretAlg.algName)
             override fun getSignKey(): Key = this.secret
             override fun getVerifyKey(): Key = this.secret
+            override fun getAlgorithm(): JwtAlgorithm = this.secretAlg
         }
     }
 }

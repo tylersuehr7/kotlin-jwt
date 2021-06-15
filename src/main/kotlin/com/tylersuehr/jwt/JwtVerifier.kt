@@ -82,18 +82,15 @@ class JwtVerifier(val keyProvider: JwtKeyProvider) {
         // Verify the signature of the token
         val headerClaims = Claims.jsonifier.fromJson(String(Claims.decoder.decode(segments[0])), Claims::class.java)
         val algorithm = headerClaims.getAlgorithm() ?: throw JwtException(JwtErrorMessage("Jwt does not contain an algorithm!"))
+        if (keyProvider.getAlgorithm() != algorithm) {
+            throw JwtException(JwtErrorMessage("Jwt algorithm claim mismatch!"))
+        }
 
         // Verify the signature of the token
         val signature = Claims.decoder.decode(segments[2])
         val contentBytes = "${segments[0]}.${segments[1]}".toByteArray()
         if (!Bouncy.verify(algorithm, keyProvider.getVerifyKey(), contentBytes, signature)) {
             throw JwtException(JwtErrorMessage("Jwt signature could not be verified!"))
-        }
-
-        // Check algorithm, if provided
-        val checkAlg = keyProvider.getAlgorithm()
-        if (algorithm != checkAlg) {
-            throw JwtException(JwtErrorMessage("Jwt algorithm claim mismatch!"))
         }
 
         // Parse and convert the payload to claims data structure

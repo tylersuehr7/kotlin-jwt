@@ -15,6 +15,7 @@ class JwtSigner(
      */
     fun compact(): String {
         val algorithm = keyProvider.getAlgorithm()
+        headerClaims.setAlgorithm(algorithm)
 
         // Convert claims to json and encode them
         val encodedHeader = Claims.encoder.encodeToString(Claims.jsonifier.toJson(this.headerClaims).toByteArray())

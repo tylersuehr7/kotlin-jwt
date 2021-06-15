@@ -2,7 +2,6 @@ package com.tylersuehr.jwt
 
 import org.junit.jupiter.api.Test
 import java.security.Key
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 /**
@@ -11,18 +10,12 @@ import kotlin.test.assertNotNull
  */
 class JwtSignerTest {
     @Test
-    fun algorithm() {
-        val signer = JwtSigner(makeKeyProvider())
-        val expected = JwtAlgorithm.KS256
-        signer.setAlgorithm(expected)
-        assertEquals(expected, signer.headerClaims.getAlgorithm())
-    }
-
-    @Test
     fun compact() {
-        val header = Claims().setType("JWT").setAlgorithm(JwtAlgorithm.KS256)
-        val payload = Claims().setIssuer("unit.tester")
-        val signer = JwtSigner(makeKeyProvider(), header, payload)
+        val signer = JwtSigner(
+            makeKeyProvider(),
+            Claims().setType("JWT").setAlgorithm(JwtAlgorithm.KS256),
+            Claims().setIssuer("unit.tester")
+        )
         val token = signer.compact()
         assertNotNull(token)
         println(token)
@@ -30,9 +23,11 @@ class JwtSignerTest {
 
     private fun makeKeyProvider(): JwtKeyProvider {
         return object : JwtKeyProvider {
-            val secret = Bouncy.genKey("HMAC-SHA256")
+            val secretAlg = JwtAlgorithm.HS256
+            val secret = Bouncy.genKey(secretAlg.algName)
             override fun getSignKey(): Key = this.secret
             override fun getVerifyKey(): Key = this.secret
+            override fun getAlgorithm(): JwtAlgorithm = this.secretAlg
         }
     }
 }
