@@ -8,7 +8,6 @@ class JwtVerifier(val keyProvider: JwtKeyProvider) {
     internal var issuer: String? = null
     internal var audience: String? = null
     internal var subject: String? = null
-    internal var algorithm: JwtAlgorithm? = null
     internal var checkTimestamp: Boolean = false
     internal var checkId: Boolean = false
 
@@ -39,16 +38,6 @@ class JwtVerifier(val keyProvider: JwtKeyProvider) {
      */
     fun expectSubject(subject: String): JwtVerifier {
         this.subject = subject
-        return this
-    }
-
-    /**
-     * Sets an algorithm claim to be checked against.
-     * @param algorithm the expected algorithm
-     * @return {@code this}
-     */
-    fun expectAlgorithm(algorithm: JwtAlgorithm): JwtVerifier {
-        this.algorithm = algorithm
         return this
     }
 
@@ -102,8 +91,8 @@ class JwtVerifier(val keyProvider: JwtKeyProvider) {
         }
 
         // Check algorithm, if provided
-        val checkAlg = this.algorithm
-        if (checkAlg != null && algorithm != checkAlg) {
+        val checkAlg = keyProvider.getAlgorithm()
+        if (algorithm != checkAlg) {
             throw JwtException(JwtErrorMessage("Jwt algorithm claim mismatch!"))
         }
 
